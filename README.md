@@ -13,10 +13,6 @@ FinSight transforms PDFs and images into structured, validated, and audit-ready 
 > ✅ Built for transparency  
 > ✅ Built for real financial workflows
 
-# FinSight AI
-
-AI-powered, rule-driven compliance analyzer for financial documents. 
-
 FinSight is a financial document intelligence system that performs automated extraction, validation, and compliance assessment on unstructured financial documents. It integrates an ADE-style document extraction pipeline with a deterministic, rule-driven validation engine to deliver transparent, auditable financial insight at scale.
 
 FinSight ingests PDF and image-based documents—such as KYC packets, identity documents, bank forms, and regulatory disclosures—then converts them into structured, machine-readable fields. These fields are normalized into a canonical schema and evaluated against declarative YAML rulepacks representing KYC, AML, and document-integrity controls. Each rule produces deterministic pass/fail outcomes with field-level evidence, metadata traces, and configuration-driven thresholds.
