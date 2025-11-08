@@ -26,16 +26,16 @@ export default function Home() {
           <p>Every decision is supported by a rule, visible and auditable.</p>
         </div>
         <div className="card">
-          <h3>Enterprise-Ready</h3>
-          <p>Containerized backend, modular rules, production-grade API.</p>
+          <h3>Real-Time Scoring</h3>
+          <p>nstant compliance scoring with detailed risk breakdowns</p>
         </div>
         <div className="card">
           <h3>Fast & Accurate</h3>
           <p>Powered by LandingAI’s high-performance document extraction engine.</p>
         </div>
         <div className="card">
-          <h3>Dark/Light Mode</h3>
-          <p>Beautiful fintech UI with premium design language.</p>
+          <h3>Document Intelligence</h3>
+          <p>Advanced extraction from IDs, statements, and compliance documents</p>
         </div>
       </div>
     </div>
