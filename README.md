@@ -5,7 +5,8 @@
   <img src="https://img.shields.io/badge/Compliance-KYC%2FAML-orange?style=for-the-badge" />
 </p>
 
-# FinSight  <img width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/41628c67-12fa-4b4e-ad62-cc328a128f4e" />
+# FinSight  
+<img width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/41628c67-12fa-4b4e-ad62-cc328a128f4e" />
 
 **AI-powered financial document intelligence for automated KYC/AML compliance.**  
 FinSight transforms PDFs and images into structured, validated, and audit-ready compliance insight using ADE-style extraction and a declarative rule engine.
