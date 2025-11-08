@@ -1,0 +1,28 @@
+
+# AML heuristic checks (demonstration only)
+- id: aml_country_not_high_risk
+  field: country
+  description: "Country must not be in high-risk list"
+  when: not_in
+  allowed_values: ["IR","KP","SY"]  # example codes
+
+- id: aml_no_sanctions_hit
+  field: sanctions_hit
+  description: "Customer must not match sanctions watchlist (mock)"
+  when: equals
+  equals: false
+
+- id: aml_pep_additional_review
+  field: pep_flag
+  description: "If PEP, require additional review flag on source_of_funds"
+  when: implies
+  pre_field: pep_flag
+  pre_equals: true
+  field: source_of_funds
+  allowed_values: ["salary","employment","business_income"]
+
+- id: aml_crypto_source_requires_review
+  field: source_of_funds
+  description: "If crypto source, mark for enhanced due diligence"
+  when: not_in
+  allowed_values: ["crypto_trading"]  # if equals crypto_trading -> fail

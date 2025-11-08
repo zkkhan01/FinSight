@@ -27,8 +27,7 @@ class RuleEngine:
         rules = self._cache.get(ruleset, [])
         out: List[RuleResult] = []
         for rule in rules:
-            res = self._eval_rule(fields, rule)
-            out.append(res)
+            out.append(self._eval_rule(fields, rule))
         return out
 
     def _eval_rule(self, fields: Dict[str, Any], rule: Dict[str, Any]) -> RuleResult:
@@ -40,8 +39,7 @@ class RuleEngine:
         pattern = rule.get("pattern")
         min_age = rule.get("min_age")
         max_age = rule.get("max_age")
-
-        value = fields.get(field)
+        value = fields.get(field) if field else None
 
         passed = False
         details = {"field": field, "value": value}
@@ -58,8 +56,7 @@ class RuleEngine:
         elif cond == "regex":
             passed = bool(value) and bool(re.search(pattern, str(value)))
             details["pattern"] = pattern
-        elif cond in ("min_age","max_age"):
-            # compute age from dob (YYYY-MM-DD)
+        elif cond in ("min_age", "max_age"):
             dob = fields.get(field) if field else None
             age = None
             try:
@@ -76,8 +73,28 @@ class RuleEngine:
             else:
                 passed = age is not None and age <= int(max_age or 200)
                 details["max_age"] = max_age
+        elif cond == "not_in":
+            passed = value not in allowed
+            details["blocked_values"] = allowed
+        elif cond == "implies":
+            # If precondition is True, dependent field must satisfy 'equals' or 'in'
+            pre_field = rule.get("pre_field")
+            pre_equals = rule.get("pre_equals")
+            dep_equals = rule.get("equals")
+            dep_in = rule.get("allowed_values", [])
+            pre_ok = fields.get(pre_field) == pre_equals
+            if not pre_ok:
+                passed = True  # vacuous truth
+            else:
+                if dep_equals is not None:
+                    passed = (fields.get(field) == dep_equals)
+                elif dep_in:
+                    passed = (fields.get(field) in dep_in)
+                else:
+                    passed = False
+            details.update({"pre_field": pre_field, "pre_equals": pre_equals})
         else:
-            passed = False
             details["error"] = f"Unknown condition: {cond}"
+            passed = False
 
         return RuleResult(id=rid, description=desc, passed=bool(passed), details=details)

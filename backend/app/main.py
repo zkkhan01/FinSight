@@ -7,8 +7,7 @@ from .ade_client import MockADEClient
 from .scoring import score_report
 import uuid
 
-app = FastAPI(title="RegulaScan A API")
-
+app = FastAPI(title="FinSight API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,28 +24,20 @@ def health():
     return {"status": "ok"}
 
 @app.get("/rules", response_model=RulesInfo)
-def get_rules():
-    info = engine.describe()
-    return info
+def rules():
+    return engine.describe()
 
 @app.post("/analyze", response_model=AnalyzeResponse)
-async def analyze(file: UploadFile = File(...), ruleset: str = Form("kyc_basic")):
-    # Save upload (demo only; in prod store safely or stream)
+async def analyze(file: UploadFile = File(...), ruleset: str = Form("kyc_advanced")):
     content = await file.read()
     doc_id = str(uuid.uuid4())
     tmp_path = f"/tmp/{doc_id}_{file.filename}"
     with open(tmp_path, "wb") as f:
         f.write(content)
 
-    # Extract (mocked)
     fields = ade.extract(tmp_path)
-
-    # Evaluate rules
     results = engine.evaluate(fields, ruleset=ruleset)
-
-    # Score
     score = score_report(results)
-
     return AnalyzeResponse(
         document_id=doc_id,
         filename=file.filename,

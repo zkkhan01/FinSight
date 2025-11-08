@@ -1,0 +1,53 @@
+
+# Advanced KYC checks
+- id: kyc_full_name_present
+  field: full_name
+  description: "Full legal name must be present"
+  when: not_empty
+
+- id: kyc_dob_format_valid
+  field: dob
+  description: "DOB must be YYYY-MM-DD"
+  when: regex
+  pattern: "^\d{4}-\d{2}-\d{2}$"
+
+- id: kyc_age_min_18
+  field: dob
+  description: "Customer must be at least 18 years old"
+  when: min_age
+  min_age: 18
+
+- id: kyc_country_allowed
+  field: country
+  description: "Country must be in allowlist"
+  when: in
+  allowed_values: ["US","CA","UK","IE","DE","FR","SG","AU","NZ"]
+
+- id: kyc_document_number_present
+  field: document_number
+  description: "Government ID number must be present"
+  when: not_empty
+
+- id: kyc_doc_address_no_po_box
+  field: address
+  description: "Residential address only (no P.O. boxes)"
+  when: regex
+  pattern: "^(?!.*P\.O\.).+"
+
+- id: kyc_proof_of_address_required
+  field: proof_of_address
+  description: "Proof of address must be provided"
+  when: equals
+  equals: true
+
+- id: kyc_document_not_expired
+  field: expiry_date
+  description: "Document must not be obviously expired format (>=2025 suggested in demo)"
+  when: regex
+  pattern: "^(2025|2026|2027|2028|2029|203\d)-\d{2}-\d{2}$"
+
+- id: kyc_email_format_valid
+  field: email
+  description: "Email format basic check"
+  when: regex
+  pattern: "^[^@\s]+@[^@\s]+\.[^@\s]+$"

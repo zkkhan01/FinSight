@@ -1,73 +1,71 @@
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
-export default function App() {
+export default function App(){
   const [file, setFile] = useState(null)
-  const [ruleset, setRuleset] = useState('kyc_basic')
-  const [result, setResult] = useState(null)
+  const [rulesets, setRulesets] = useState(['kyc_advanced'])
+  const [ruleset, setRuleset] = useState('kyc_advanced')
+  const [res, setRes] = useState(null)
+  const [err, setErr] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
-  const onSubmit = async (e) => {
+  useEffect(()=>{
+    fetch(`${API_BASE}/rules`).then(r=>r.json()).then(d=>{
+      const names = Object.keys(d.rulesets || {})
+      if(names.length) { setRulesets(names); setRuleset(names[0]) }
+    }).catch(()=>{})
+  },[])
+
+  const submit = async (e)=>{
     e.preventDefault()
-    setError('')
-    setResult(null)
-    if (!file) { setError('Please choose a file.'); return; }
+    setErr(''); setRes(null)
+    if(!file) { setErr('Choose a file first.'); return }
     const form = new FormData()
     form.append('file', file)
     form.append('ruleset', ruleset)
     setLoading(true)
-    try {
-      const res = await fetch(`${API_BASE}/analyze`, { method: 'POST', body: form })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
-      setResult(data)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+    try{
+      const r = await fetch(`${API_BASE}/analyze`, { method:'POST', body: form })
+      if(!r.ok) throw new Error(`HTTP ${r.status}`)
+      const data = await r.json()
+      setRes(data)
+    }catch(e){ setErr(String(e)) } finally { setLoading(false) }
   }
 
   return (
-    <div style={{maxWidth: 800, margin: '40px auto', fontFamily: 'system-ui'}}>
-      <img width="120" height="120" alt="image" src="assets/finsight.png" /> 
-      <h1>FinSight AI</h1>
-      <p>AI-powered financial document insight.</p>
-      <p>Upload a (synthetic) document to run KYC/AML checks with transparent rules.</p>
+    <div style={{maxWidth:900, margin:'40px auto', fontFamily:'system-ui'}}>
+      <header style={{display:'flex', alignItems:'center', gap:12}}>
+        <img src="/brand/finsight.png" width="36" height="36" alt="FinSight"/>
+        <h1 style={{margin:0}}>FinSight</h1>
+      </header>
+      <p>Upload a (synthetic) document to run KYC/AML checks with transparent rule‑packs.</p>
 
-      <form onSubmit={onSubmit} style={{display:'grid', gap: 12}}>
+      <form onSubmit={submit} style={{display:'grid', gap:12}}>
+        <input type="file" onChange={e=>setFile(e.target.files?.[0]||null)} />
         <label>
-          <div>Choose file (PDF/IMG)</div>
-          <input type="file" onChange={e => setFile(e.target.files?.[0] || null)} />
-        </label>
-
-        <label>
-          <div>Ruleset</div>
+          Ruleset:{" "}
           <select value={ruleset} onChange={e=>setRuleset(e.target.value)}>
-            <option value="kyc_basic">kyc_basic</option>
+            {rulesets.map(n=> <option key={n}>{n}</option>)}
           </select>
         </label>
-
-        <button disabled={loading}>{loading ? 'Analyzing…' : 'Analyze'}</button>
+        <button disabled={loading}>{loading?'Analyzing…':'Analyze'}</button>
       </form>
 
-      {error && <p style={{color:'crimson'}}>{error}</p>}
+      {err && <p style={{color:'crimson'}}>{err}</p>}
 
-      {result && (
-        <div style={{marginTop: 24}}>
-          <h2>Result</h2>
-          <pre style={{background:'#f6f6f6', padding:12, borderRadius:8}}>
-            {JSON.stringify(result, null, 2)}
-          </pre>
-          <h3>Score: {result.score}%</h3>
-          <details>
-            <summary>Extracted Fields</summary>
-            <pre>{JSON.stringify(result.extracted_fields, null, 2)}</pre>
+      {res && (
+        <section style={{marginTop:24}}>
+          <h2>Report</h2>
+          <p><b>Score:</b> {res.score}%</p>
+          <details open><summary><b>Extracted Fields</b></summary>
+            <pre style={{background:'#f6f6f6', padding:12, borderRadius:8}}>{JSON.stringify(res.extracted_fields,null,2)}</pre>
           </details>
-        </div>
+          <details open><summary><b>Rule Results</b></summary>
+            <pre style={{background:'#f6f6f6', padding:12, borderRadius:8}}>{JSON.stringify(res.rule_results,null,2)}</pre>
+          </details>
+        </section>
       )}
     </div>
   )

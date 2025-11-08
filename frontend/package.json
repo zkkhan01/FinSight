@@ -1,6 +1,6 @@
 {
-  "name": "regulascan-a-frontend",
-  "version": "0.1.0",
+  "name": "finsight-web",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,48 +1,28 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/FinSight-AI%20Financial%20Insight-blue?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/React-Frontend-blue?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Compliance-KYC%2FAML-orange?style=for-the-badge" />
-</p>
 
-<img width="120" height="120" alt="image" src="assets/finsight.png" /> 
+# FinSight
 
-# FinSight  
+FinSight is an AI‑powered financial document analyzer that combines document extraction (ADE-style) with a transparent, rule‑based engine to perform KYC/AML checks and produce audit‑ready compliance reports.
 
-**AI-powered financial document intelligence for automated KYC/AML compliance.**  
-FinSight transforms PDFs and images into structured, validated, and audit-ready compliance insight using ADE-style extraction and a declarative rule engine.
-
-> ✅ Built for speed  
-> ✅ Built for transparency  
-> ✅ Built for real financial workflows
-
-FinSight is a financial document intelligence system that performs automated extraction, validation, and compliance assessment on unstructured financial documents. It integrates an ADE-style document extraction pipeline with a deterministic, rule-driven validation engine to deliver transparent, auditable financial insight at scale.
-
-FinSight ingests PDF and image-based documents—such as KYC packets, identity documents, bank forms, and regulatory disclosures—then converts them into structured, machine-readable fields. These fields are normalized into a canonical schema and evaluated against declarative YAML rulepacks representing KYC, AML, and document-integrity controls. Each rule produces deterministic pass/fail outcomes with field-level evidence, metadata traces, and configuration-driven thresholds.
-
-The architecture emphasizes explainability, reproducibility, and system-level transparency, making FinSight suitable for automated onboarding pipelines, internal audit workflows, and pre-compliance screening system
-
-**Goal:** Given a PDF/IMG of a KYC/AML doc (e.g., driver license + utility bill), extract structured fields using an ADE (Automated Document Extraction) pipeline, then apply transparent rules (YAML) and produce a pass/fail report with explanations.
-
-## Why it's safe & within rules
-- Uses publicly shareable, synthetic sample docs only (no PII).
-- Deterministic, auditable rule engine; LLM is optional/assistive.
-- No scraping, no bypassing auth, no restricted data sources.
+## Highlights
+- **Explainable**: YAML rule‑packs, not opaque heuristics.
+- **Safe demo**: Works with synthetic/anonymized samples.
+- **Modular**: Swap in any Document Extraction provider (e.g., LandingAI ADE, AWS Textract).
+- **Full stack**: FastAPI backend + React/Vite frontend + Docker compose.
 
 ## Architecture
 ```text
 FinSight/
-├── backend/                # FastAPI + rules engine + mock ADE client
-├── frontend/               # Minimal React app (upload & results)
-├── docker-compose.yml
-└── README.md
+├── backend/                # API, rules engine, scoring, mock ADE client
+├── frontend/               # React app for upload + results
+├── assets/                 # Branding assets (logo)
+└── docker-compose.yml
 ```
 
 ## Quickstart (Dev)
 ### Backend
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate  # (Windows: .venv\Scripts\activate)
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
@@ -53,44 +33,29 @@ cd frontend
 npm install
 npm run dev
 ```
+Visit http://localhost:5173 (frontend) with backend at http://localhost:8000.
 
-Visit http://localhost:5173 (frontend) talking to http://localhost:8000 (backend).
-
-## Docker
+### Docker
 ```bash
 docker compose up --build
 ```
 
-## Rules
-- Define rules in YAML at `backend/app/rules/*.yaml`.
-- Each rule has an `id`, `description`, `when` (field condition), and optional `pattern` or `allowed_values`.
-- Add/modify rules without code changes.
-
-## Example Rule (KYC)
-```yaml
-- id: kyc_name_present
-  field: full_name
-  description: "Legal name must be present"
-  when: "exists"   # supported: exists, equals, in, regex, not_empty, min_age, max_age
-- id: kyc_country_allowed
-  field: country
-  description: "Customer country must be in whitelist"
-  when: "in"
-  allowed_values: ["US","CA","UK"]
-```
-
 ## API
-- `GET /health` -> `{"status":"ok"}`
-- `GET /rules` -> list loaded rules & counts
-- `POST /analyze` (multipart form): `file=<pdf/img>` + optional `ruleset` name  
-  Returns JSON report: extracted fields, rule outcomes, and a compliance score.
+- `GET /health` → status
+- `GET /rules` → ruleset names and counts
+- `POST /analyze` (multipart): `file`, optional `ruleset` (default `kyc_advanced`)
 
-## Tests
-```bash
-cd backend
-pytest -q
-```
+## Rules
+Rule‑packs live in `backend/app/rules/`:
+- `kyc_basic.yaml` – minimal identity checks
+- `kyc_advanced.yaml` – stronger KYC checks (address, document, age, country lists, regex integrity)
+- `aml_advanced.yaml` – AML heuristics: risk flags for jurisdictions, addresses, document mismatch, etc.
 
-## Notes
-- ADE integration is mocked for offline demo. Swap in real vendor SDK in `app/ade_client.py`.
-- LLM (optional) prompt helper included but disabled by default to avoid network calls.
+Add or modify YAML files to update policy without changing code.
+
+## Security Notes
+- Use only anonymized or synthetic data in demos.
+- Configure real ADE credentials via environment variables if you integrate a live provider.
+
+## License
+MIT

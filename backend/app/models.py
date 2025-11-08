@@ -16,4 +16,4 @@ class AnalyzeResponse(BaseModel):
     score: float
 
 class RulesInfo(BaseModel):
-    rulesets: Dict[str, int]  # ruleset name -> count
+    rulesets: Dict[str, int]
