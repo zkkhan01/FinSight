@@ -1,0 +1,28 @@
+
+- id: kyc_name_present
+  field: full_name
+  description: "Legal name must be present"
+  when: "not_empty"
+
+- id: kyc_country_whitelist
+  field: country
+  description: "Country must be US/CA/UK"
+  when: "in"
+  allowed_values: ["US","CA","UK"]
+
+- id: kyc_document_number_present
+  field: document_number
+  description: "Document number present"
+  when: "not_empty"
+
+- id: kyc_age_minimum
+  field: dob
+  description: "Customer must be 18+"
+  when: "min_age"
+  min_age: 18
+
+- id: kyc_address_required
+  field: address
+  description: "Residential address required (no P.O. boxes)"
+  when: "regex"
+  pattern: "^(?!.*P\.O\.).+"
