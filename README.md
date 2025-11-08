@@ -38,8 +38,26 @@ The architecture emphasizes explainability, reproducibility, and system-level tr
 ## Architecture
 ```text
 FinSight/
-├── backend/                # FastAPI + rules engine + mock ADE client
-├── frontend/               # Minimal React app (upload & results)
+├── backend/                   # FastAPI service
+│   ├── app/
+│   │   ├── ade_client.py      # Real/Mock ADE client
+│   │   ├── rules_engine.py    # Declarative YAML logic
+│   │   ├── scoring.py         # Compliance scoring
+│   │   ├── models.py
+│   │   ├── main.py            # API routes
+│   │   └── rules/
+│   │       ├── kyc_basic.yaml
+│       └── aml_advanced.yaml
+│
+├── frontend/                  # Premium React dashboard
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── Home.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   ├── styles/finsight.css
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│
 ├── docker-compose.yml
 └── README.md
 ```
