@@ -24,6 +24,8 @@ FinSight ingests PDF and image-based documents—such as KYC packets, identity d
 
 The architecture emphasizes explainability, reproducibility, and system-level transparency, making FinSight suitable for automated onboarding pipelines, internal audit workflows, and pre-compliance screening system
 
+<img width="750" height="500" alt="image" src="https://github.com/user-attachments/assets/e46b6614-ed82-4063-91a8-d76e939718a8" />
+
 **Goal:** Given a PDF/IMG of a KYC/AML doc (e.g., driver license + utility bill), extract structured fields using an ADE (Automated Document Extraction) pipeline, then apply transparent rules (YAML) and produce a pass/fail report with explanations.
 
 ## Why it's safe & within rules
