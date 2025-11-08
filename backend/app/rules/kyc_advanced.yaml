@@ -1,5 +1,4 @@
 
-# Advanced KYC checks
 - id: kyc_full_name_present
   field: full_name
   description: "Full legal name must be present"
@@ -42,7 +41,7 @@
 
 - id: kyc_document_not_expired
   field: expiry_date
-  description: "Document must not be obviously expired format (>=2025 suggested in demo)"
+  description: "Document should not be expired"
   when: regex
   pattern: "^(2025|2026|2027|2028|2029|203\d)-\d{2}-\d{2}$"
 

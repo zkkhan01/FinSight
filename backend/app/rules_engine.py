@@ -39,6 +39,7 @@ class RuleEngine:
         pattern = rule.get("pattern")
         min_age = rule.get("min_age")
         max_age = rule.get("max_age")
+        equals = rule.get("equals")
         value = fields.get(field) if field else None
 
         passed = False
@@ -49,10 +50,14 @@ class RuleEngine:
         elif cond == "not_empty":
             passed = value not in (None, "", [])
         elif cond == "equals":
-            passed = value == rule.get("equals")
+            passed = value == equals
+            details["equals"] = equals
         elif cond == "in":
             passed = value in allowed
             details["allowed_values"] = allowed
+        elif cond == "not_in":
+            passed = value not in allowed
+            details["blocked_values"] = allowed
         elif cond == "regex":
             passed = bool(value) and bool(re.search(pattern, str(value)))
             details["pattern"] = pattern
@@ -73,18 +78,14 @@ class RuleEngine:
             else:
                 passed = age is not None and age <= int(max_age or 200)
                 details["max_age"] = max_age
-        elif cond == "not_in":
-            passed = value not in allowed
-            details["blocked_values"] = allowed
         elif cond == "implies":
-            # If precondition is True, dependent field must satisfy 'equals' or 'in'
             pre_field = rule.get("pre_field")
             pre_equals = rule.get("pre_equals")
             dep_equals = rule.get("equals")
             dep_in = rule.get("allowed_values", [])
             pre_ok = fields.get(pre_field) == pre_equals
             if not pre_ok:
-                passed = True  # vacuous truth
+                passed = True
             else:
                 if dep_equals is not None:
                     passed = (fields.get(field) == dep_equals)

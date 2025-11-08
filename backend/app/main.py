@@ -1,13 +1,14 @@
 
+import os, uuid
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from .models import AnalyzeResponse, RulesInfo
 from .rules_engine import RuleEngine
-from .ade_client import ADEClient
+from .ade_client import LandingAIADEClient, MockADEClient
 from .scoring import score_report
-import uuid
 
 app = FastAPI(title="FinSight API", version="1.0.0")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,11 +18,16 @@ app.add_middleware(
 )
 
 engine = RuleEngine(rules_dir="app/rules")
-ade = ADEClient()
+
+USE_MOCK = os.getenv("USE_MOCK", "false").lower() == "true"
+if USE_MOCK:
+    ade = MockADEClient()
+else:
+    ade = LandingAIADEClient()
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "mode": "mock" if USE_MOCK else "ade"}
 
 @app.get("/rules", response_model=RulesInfo)
 def rules():
@@ -38,6 +44,7 @@ async def analyze(file: UploadFile = File(...), ruleset: str = Form("kyc_advance
     fields = ade.extract(tmp_path)
     results = engine.evaluate(fields, ruleset=ruleset)
     score = score_report(results)
+
     return AnalyzeResponse(
         document_id=doc_id,
         filename=file.filename,
