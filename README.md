@@ -1,3 +1,17 @@
+<p align="center">
+  <img src="https://img.shields.io/badge/FinSight-AI%20Financial%20Insight-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/React-Frontend-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Compliance-KYC%2FAML-orange?style=for-the-badge" />
+</p>
+
+# 🚀 FinSight  
+**AI-powered financial document intelligence for automated KYC/AML compliance.**  
+FinSight transforms PDFs and images into structured, validated, and audit-ready compliance insight using ADE-style extraction and a declarative rule engine.
+
+> ✅ Built for speed  
+> ✅ Built for transparency  
+> ✅ Built for real financial workflows
 
 # FinSight AI
 
