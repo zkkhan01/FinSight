@@ -33,7 +33,9 @@ export default function App() {
 
   return (
     <div style={{maxWidth: 800, margin: '40px auto', fontFamily: 'system-ui'}}>
-      <h1>RegulaScan A</h1>
+      <img width="120" height="120" alt="image" src="https://github.com/user-attachments/assets/41628c67-12fa-4b4e-ad62-cc328a128f4e" /> 
+      <h1>FinSight AI</h1>
+      <p>AI-powered financial document insight.</p>
       <p>Upload a (synthetic) document to run KYC/AML checks with transparent rules.</p>
 
       <form onSubmit={onSubmit} style={{display:'grid', gap: 12}}>
