@@ -1,38 +1,46 @@
+import os
+import requests
 
-# Mock ADE client – deterministic extraction from filename hints.
-import re
-from typing import Dict, Any
+class ADEClient:
+    """
+    Real LandingAI ADE client using the universal DPT-2 model.
+    No pipeline ID is required for the hackathon.
+    """
 
-class MockADEClient:
-    def extract(self, file_path: str) -> Dict[str, Any]:
-        f = file_path.lower()
-        fields = {
-            "full_name": "Alex Johnson",
-            "dob": "1999-06-15",
-            "country": "US",
-            "document_type": "driver_license",
-            "document_number": "D123-456-7890",
-            "issue_date": "2022-07-01",
-            "expiry_date": "2030-07-01",
-            "address": "123 Market St, Chicago, IL 60616",
-            "proof_of_address": True,
+    def __init__(self):
+        self.api_key = os.getenv("LANDINGAI_API_KEY")
+        self.model = "DPT-2"
+        self.url = f"https://api.landing.ai/ade/models/{self.model}/parse"
+
+    def extract(self, file_path: str):
+        if not self.api_key:
+            raise ValueError("Missing LANDINGAI_API_KEY in environment!")
+
+        headers = {"Authorization": f"Bearer {self.api_key}"}
+
+        with open(file_path, "rb") as f:
+            files = {"file": (os.path.basename(file_path), f)}
+            response = requests.post(self.url, headers=headers, files=files)
+            response.raise_for_status()
+            data = response.json()
+
+        fields = data.get("fields", {})
+
+        # Map ADE → FinSight expected fields
+        return {
+            "full_name": fields.get("name"),
+            "dob": fields.get("dob"),
+            "country": fields.get("country"),
+            "address": fields.get("address"),
+            "document_type": fields.get("document_type"),
+            "document_number": fields.get("id_number"),
+            "issue_date": fields.get("issue_date"),
+            "expiry_date": fields.get("expiry_date"),
+            "email": fields.get("email"),
+            "proof_of_address": fields.get("proof_of_address", False),
+
+            # Extra fields required for AML rules
             "pep_flag": False,
             "sanctions_hit": False,
-            "source_of_funds": "salary",
-            "email": "alex.j@example.com"
+            "source_of_funds": None
         }
-        if "canada" in f:
-            fields["country"] = "CA"
-            fields["address"] = "99 King St W, Toronto, ON M5H 1A1"
-        if re.search(r"expired|temp", f):
-            fields["expiry_date"] = "2024-01-01"
-        if re.search(r"poabox|p\.o\.", f):
-            fields["address"] = "P.O. Box 123, Anywhere"
-            fields["proof_of_address"] = False
-        if "pep" in f:
-            fields["pep_flag"] = True
-        if "sanction" in f:
-            fields["sanctions_hit"] = True
-        if "crypto" in f:
-            fields["source_of_funds"] = "crypto_trading"
-        return fields
