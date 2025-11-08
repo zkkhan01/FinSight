@@ -1,8 +1,13 @@
 <p align="center">
 <img width="120" height="120" alt="image" src="assets/finsight.png" /> 
+</p>
 
+<p align="center">
+  
 # FinSight  
 </p>
+
+
 **AI-powered financial document intelligence for automated KYC/AML compliance.**  
 
 <p align="center">
