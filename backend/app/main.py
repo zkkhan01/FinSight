@@ -3,7 +3,7 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from .models import AnalyzeResponse, RulesInfo
 from .rules_engine import RuleEngine
-from .ade_client import MockADEClient
+from .ade_client import ADEClient
 from .scoring import score_report
 import uuid
 
@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 engine = RuleEngine(rules_dir="app/rules")
-ade = MockADEClient()
+ade = ADEClient()
 
 @app.get("/health")
 def health():
