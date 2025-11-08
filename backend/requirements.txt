@@ -6,3 +6,4 @@ python-multipart==0.0.9
 PyYAML==6.0.2
 requests==2.32.3
 pytest==8.3.3
+landingai-ade>=0.1.5
