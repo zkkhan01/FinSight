@@ -1,5 +1,5 @@
 
-# RegulaScan A
+# FinSight AI
 
 AI-powered, rule-driven compliance analyzer for financial documents.  
 **Goal:** Given a PDF/IMG of a KYC/AML doc (e.g., driver license + utility bill), extract structured fields using an ADE (Automated Document Extraction) pipeline, then apply transparent rules (YAML) and produce a pass/fail report with explanations.
@@ -11,7 +11,7 @@ AI-powered, rule-driven compliance analyzer for financial documents.
 
 ## Architecture
 ```text
-regulascanA_full/
+FinSight/
 ├── backend/                # FastAPI + rules engine + mock ADE client
 ├── frontend/               # Minimal React app (upload & results)
 ├── docker-compose.yml
