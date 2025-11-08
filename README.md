@@ -6,6 +6,7 @@
 </p>
 
 <img width="120" height="120" alt="image" src="https://github.com/user-attachments/assets/41628c67-12fa-4b4e-ad62-cc328a128f4e" /> 
+
 # FinSight  
 
 **AI-powered financial document intelligence for automated KYC/AML compliance.**  
