@@ -19,11 +19,10 @@ app.add_middleware(
 
 engine = RuleEngine(rules_dir="app/rules")
 
-USE_MOCK = os.getenv("USE_MOCK", "false").lower() == "true"
-if USE_MOCK:
-    ade = MockADEClient()
-else:
-    ade = LandingAIADEClient()
+from .ade_client import get_ade_client
+
+ade = get_ade_client()
+
 
 @app.get("/health")
 def health():
